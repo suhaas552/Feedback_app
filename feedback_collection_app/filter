@@ -1,0 +1,44 @@
+import 'package:flutter/material.dart';
+
+class RatingFilterWidget extends StatelessWidget {
+  final int selectedRating;
+  final Function(int) onChanged;
+
+  const RatingFilterWidget({
+    super.key,
+    required this.selectedRating,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            "Filter by Rating:",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          DropdownButton<int>(
+            value: selectedRating,
+            items: const [
+              DropdownMenuItem(value: 0, child: Text("All")),
+              DropdownMenuItem(value: 1, child: Text("1 Star")),
+              DropdownMenuItem(value: 2, child: Text("2 Stars")),
+              DropdownMenuItem(value: 3, child: Text("3 Stars")),
+              DropdownMenuItem(value: 4, child: Text("4 Stars")),
+              DropdownMenuItem(value: 5, child: Text("5 Stars")),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                onChanged(value);
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
