@@ -112,7 +112,12 @@ class _FeedbackPageState extends State<FeedbackPage> {
       rating = 0;
     }
   }
-
+Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => const ThankYouConfetti(),
+  ),
+);
   void deleteFeedback(int index) {
     setState(() {
       feedbackList.removeAt(index);
