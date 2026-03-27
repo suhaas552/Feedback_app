@@ -4,18 +4,41 @@ void main() {
   runApp(const FeedbackApp());
 }
 
-class FeedbackApp extends StatelessWidget {
+// 🔥 STATEFUL APP FOR THEME CONTROL
+class FeedbackApp extends StatefulWidget {
   const FeedbackApp({super.key});
+
+  @override
+  State<FeedbackApp> createState() => _FeedbackAppState();
+}
+
+class _FeedbackAppState extends State<FeedbackApp> {
+  bool isDarkMode = false;
+
+  void toggleTheme() {
+    setState(() {
+      isDarkMode = !isDarkMode;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const FeedbackPage(),
+
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+
+      home: FeedbackPage(
+        toggleTheme: toggleTheme,
+        isDarkMode: isDarkMode,
+      ),
     );
   }
 }
 
+// 📦 MODEL CLASS
 class Feedback {
   String name;
   String email;
@@ -30,8 +53,16 @@ class Feedback {
   });
 }
 
+// 🧾 MAIN PAGE
 class FeedbackPage extends StatefulWidget {
-  const FeedbackPage({super.key});
+  final VoidCallback toggleTheme;
+  final bool isDarkMode;
+
+  const FeedbackPage({
+    super.key,
+    required this.toggleTheme,
+    required this.isDarkMode,
+  });
 
   @override
   State<FeedbackPage> createState() => _FeedbackPageState();
@@ -113,16 +144,30 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Feedback CRUD App"),
         centerTitle: true,
+
+        // 🌙☀️ THEME TOGGLE BUTTON
+        actions: [
+          IconButton(
+            icon: Icon(
+              widget.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+            ),
+            onPressed: widget.toggleTheme,
+          ),
+        ],
       ),
 
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.blue.shade300, Colors.blue.shade900],
+            colors: isDark
+                ? [Colors.black, Colors.grey.shade900]
+                : [Colors.blue.shade300, Colors.blue.shade900],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -145,11 +190,13 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(5, (i) => buildStar(i + 1)),
+                          children:
+                              List.generate(5, (i) => buildStar(i + 1)),
                         ),
 
                         TextFormField(
-                          decoration: const InputDecoration(labelText: "Name"),
+                          decoration:
+                              const InputDecoration(labelText: "Name"),
                           validator: (v) =>
                               v!.isEmpty ? "Enter name" : null,
                           onSaved: (v) => name = v!,
@@ -157,7 +204,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
                         ),
 
                         TextFormField(
-                          decoration: const InputDecoration(labelText: "Email"),
+                          decoration:
+                              const InputDecoration(labelText: "Email"),
                           validator: (v) =>
                               v!.contains('@') ? null : "Invalid email",
                           onSaved: (v) => email = v!,
@@ -198,22 +246,24 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     child: ListTile(
                       title: Text(fb.name),
                       subtitle: Text(
-                          "Email: ${fb.email}\nRating: ${fb.rating}\n${fb.summary}"),
+                        "Email: ${fb.email}\nRating: ${fb.rating}\n${fb.summary}",
+                      ),
                       isThreeLine: true,
-
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
 
                           // ✏️ EDIT
                           IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.blue),
+                            icon: const Icon(Icons.edit,
+                                color: Colors.blue),
                             onPressed: () => editFeedback(index),
                           ),
 
                           // ❌ DELETE
                           IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
+                            icon: const Icon(Icons.delete,
+                                color: Colors.red),
                             onPressed: () => deleteFeedback(index),
                           ),
                         ],
