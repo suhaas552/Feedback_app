@@ -1,0 +1,75 @@
+import 'package:flutter/material.dart';
+import 'package:confetti/confetti.dart';
+import 'dart:math';
+
+class ThankYouConfetti extends StatefulWidget {
+  const ThankYouConfetti({super.key});
+
+  @override
+  State<ThankYouConfetti> createState() => _ThankYouConfettiState();
+}
+
+class _ThankYouConfettiState extends State<ThankYouConfetti> {
+  late ConfettiController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = ConfettiController(duration: const Duration(seconds: 2));
+    _controller.play();
+
+    // Auto close after 2.5 seconds
+    Future.delayed(const Duration(milliseconds: 2500), () {
+      if (mounted) Navigator.pop(context);
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black54,
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+
+          // 🎉 CONFETTI
+          ConfettiWidget(
+            confettiController: _controller,
+            blastDirection: -pi / 2,
+            emissionFrequency: 0.05,
+            numberOfParticles: 20,
+            gravity: 0.2,
+          ),
+
+          // 💬 THANK YOU MESSAGE
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(Icons.celebration, size: 80, color: Colors.amber),
+              SizedBox(height: 10),
+              Text(
+                "Thank You!",
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 5),
+              Text(
+                "Feedback Submitted 🎉",
+                style: TextStyle(color: Colors.white70),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
