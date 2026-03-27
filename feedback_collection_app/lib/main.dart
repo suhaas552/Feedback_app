@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'rating_filter_widget.dart';
+
 
 void main() {
   runApp(const FeedbackApp());
@@ -141,6 +143,13 @@ class _FeedbackPageState extends State<FeedbackPage> {
       },
     );
   }
+  List<Feedback> filteredList = selectedRatingFilter == 0
+    ? feedbackList
+    : feedbackList
+        .where((fb) => fb.rating == selectedRatingFilter)
+        .toList();
+  
+
 
   @override
   Widget build(BuildContext context) {
@@ -233,13 +242,21 @@ class _FeedbackPageState extends State<FeedbackPage> {
                 ),
               ),
             ),
+RatingFilterWidget(
+  selectedRating: selectedRatingFilter,
+  onChanged: (value) {
+    setState(() {
+      selectedRatingFilter = value;
+    });
+  },
+),
 
             // 📋 LIST VIEW
             Expanded(
               child: ListView.builder(
-                itemCount: feedbackList.length,
+               itemCount: filteredList.length,
                 itemBuilder: (context, index) {
-                  final fb = feedbackList[index];
+                  final fb = filteredList[index];
 
                   return Card(
                     margin: const EdgeInsets.all(8),
